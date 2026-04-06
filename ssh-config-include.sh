@@ -49,7 +49,7 @@ ERROR=$(2>&1 . "$SAM_BASE") || {
 create_backup ()
 {
     BACKUP_FILE="${1}_$(date +%Y%M%d_%H%M%S).backup"
-    STATUS=$(2>&1 cp -rv -- "$1" "$BACKUP_FILE") || die "$STATUS"
+    copy "$1" "$BACKUP_FILE" || die
     say "backup created: $STATUS"
 }
 
@@ -67,12 +67,11 @@ create_link ()
                         say "link already exists: '$CURRENT_LINK' > '$SOURCE_SSH_CONFIG_DIR'"
                 } || {
                     create_backup "$LINK"
-                    STATUS=$(rm -rfv "$LINK") || die "$STATUS"
+                    remove "$LINK" || die
                     false
                 }
             } || {
-                STATUS=$(2>&1 ln -sv "$SOURCE_SSH_CONFIG_DIR" "$LINK") ||
-                    die "$STATUS"
+                symlink "$SOURCE_SSH_CONFIG_DIR" "$LINK" || die
                 say "link created: $STATUS"
             }
             SOURCE_SSH_CONFIG=$LINK/${SOURCE_SSH_CONFIG##*/}
@@ -146,7 +145,7 @@ main ()
             2>&1 touch        "$TARGET_SSH_CONFIG"     &&
             2>&1 chmod -v 700 "$TARGET_SSH_CONFIG_DIR" &&
             2>&1 chmod -v 600 "$TARGET_SSH_CONFIG"
-        ) && say "$STATUS" || die "$STATUS"
+        ) && say -i "$STATUS" || die "$STATUS"
         include_config
         say "configuration included: $TARGET_SSH_CONFIG: line 1: '$INCLUDED'"
     fi
