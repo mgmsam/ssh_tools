@@ -64,7 +64,7 @@ create_link ()
                 test -d "$LINK" && {
                     CURRENT_LINK=$(resolve_path "$LINK") || die "$CURRENT_LINK"
                     is_same "$CURRENT_LINK" "$SOURCE_SSH_CONFIG_DIR" &&
-                        say "link already exists: '$CURRENT_LINK' -> '$SOURCE_SSH_CONFIG_DIR'"
+                        say "link already exists: '$LINK' -> '$SOURCE_SSH_CONFIG_DIR'"
                 } || {
                     create_backup "$LINK"
                     remove "$LINK" || die
